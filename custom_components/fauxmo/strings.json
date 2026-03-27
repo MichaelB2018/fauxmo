@@ -1,0 +1,50 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "FauxMo",
+        "description": "Set up FauxMo. Alexa will discover each exposed entity as a Belkin WeMo switch on your network.",
+        "data": {
+          "base_port": "Base port"
+        },
+        "data_description": {
+          "base_port": "Starting TCP port for WeMo device servers. Each entity gets its own port offset from this value. Default is 50000."
+        }
+      },
+      "import": {
+        "title": "Migrate from Emulated Hue",
+        "description": "An existing Emulated Hue configuration with {entity_count} entities was found. Import them into FauxMo?",
+        "data": {
+          "confirm_import": "Import entities from Emulated Hue",
+          "base_port": "Base port"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "FauxMo is already configured."
+    },
+    "error": {
+      "invalid_port": "Port must be between 1024 and 65535."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "FauxMo Options",
+        "description": "Select entities to expose as WeMo switches (max 255) and set their Alexa-visible names.",
+        "data": {
+          "base_port": "Base port",
+          "entities": "Entities to expose"
+        }
+      },
+      "entity_names": {
+        "title": "Entity Names",
+        "description": "Set the name Alexa will use for each entity. Leave blank to use the entity's friendly name."
+      }
+    },
+    "error": {
+      "too_many_entities": "Maximum 255 entities can be exposed.",
+      "invalid_port": "Port must be between 1024 and 65535."
+    }
+  }
+}
