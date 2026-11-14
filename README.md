@@ -70,9 +70,20 @@ FauxMo supports up to **255** exposed entities per installation.
 
 ## Installation
 
-### HACS (recommended)
+### Home Assistant Marketplace (recommended)
 
-1. Open **HACS → Integrations → ⋮ (three dots) → Custom repositories**.
+[![Open your Home Assistant instance and open a repository in the Marketplace.](https://my.home-assistant.io/badges/marketplace_repository.svg)](https://my.home-assistant.io/redirect/marketplace_repository/?owner=MichaelB2018&repository=fauxmo&category=integration)
+
+1. Click the button above (Home Assistant 2026.11+), or open **Marketplace**
+   in Home Assistant and search for **FauxMo**.
+2. If FauxMo is not listed yet, the link offers to add this repository for you.
+3. Click **Download**, then restart Home Assistant.
+
+### HACS (Home Assistant before 2026.11)
+
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=MichaelB2018&repository=fauxmo&category=integration)
+
+1. Open **HACS ? Integrations ? ? (three dots) ? Custom repositories**.
 2. Add this repository URL and select category **Integration**.
 3. Search for **FauxMo** and click **Download**.
 4. Restart Home Assistant.

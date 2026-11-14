@@ -1,12 +1,12 @@
 {
   "domain": "fauxmo",
   "name": "FauxMo",
-  "codeowners": [],
+  "codeowners": ["@MichaelB2018"],
   "config_flow": true,
   "dependencies": [],
   "documentation": "https://github.com/MichaelB2018/fauxmo",
   "iot_class": "local_push",
-  "quality_scale": "platinum",
+  "issue_tracker": "https://github.com/MichaelB2018/fauxmo/issues",
   "requirements": [],
-  "version": "1.0.0"
+  "version": "1.0.1"
 }
