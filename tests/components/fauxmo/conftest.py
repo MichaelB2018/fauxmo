@@ -61,10 +61,10 @@ def mock_empty_config_entry() -> ConfigEntry:
 
 @pytest.fixture
 def patch_host_ip() -> Generator[None]:
-    """Patch _get_host_ip to return a deterministic IP."""
+    """Patch the source IP lookup to return a deterministic IP."""
     with patch(
-        "custom_components.fauxmo._get_host_ip",
-        return_value=MOCK_HOST_IP,
+        "custom_components.fauxmo.async_get_source_ip",
+        AsyncMock(return_value=MOCK_HOST_IP),
     ):
         yield
 

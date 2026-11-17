@@ -161,38 +161,38 @@ async def create_upnp_responder(
     loop = asyncio.get_running_loop()
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
-    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-
     try:
-        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
-    except AttributeError:
-        pass  # SO_REUSEPORT not available on Windows
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
-    sock.bind(("", SSDP_PORT))
+        try:
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
+        except AttributeError:
+            pass  # SO_REUSEPORT not available on Windows
 
-    group = socket.inet_aton(SSDP_MULTICAST_ADDR)
-    mreq = group + socket.inet_aton(host_ip)
-    sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
-    sock.setsockopt(
-        socket.IPPROTO_IP, socket.IP_MULTICAST_IF, socket.inet_aton(host_ip)
-    )
+        sock.bind(("", SSDP_PORT))
 
-    sock.setblocking(False)
+        group = socket.inet_aton(SSDP_MULTICAST_ADDR)
+        mreq = group + socket.inet_aton(host_ip)
+        sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
+        sock.setsockopt(
+            socket.IPPROTO_IP, socket.IP_MULTICAST_IF, socket.inet_aton(host_ip)
+        )
 
-    transport, protocol = await loop.create_datagram_endpoint(
-        lambda: UPnPResponder(host_ip),
-        sock=sock,
-    )
+        sock.setblocking(False)
 
-    return transport, protocol  # type: ignore[return-value]
+        transport, protocol = await loop.create_datagram_endpoint(
+            lambda: UPnPResponder(host_ip),
+            sock=sock,
+        )
+    except BaseException:
+        sock.close()
+        raise
 
     _LOGGER.info(
-        "SSDP responder started on %s for bridge at %s:%s (advertise_port=%s, LOCATION=%s)",
+        "SSDP responder started on %s:%s for host %s",
         SSDP_MULTICAST_ADDR,
+        SSDP_PORT,
         host_ip,
-        listen_port,
-        advertise_port or listen_port,
-        f"http://{host_ip}:{advertise_port or listen_port}/description.xml",
     )
 
     return transport, protocol  # type: ignore[return-value]

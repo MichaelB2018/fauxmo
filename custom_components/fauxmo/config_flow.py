@@ -56,14 +56,6 @@ class FauxMoConfigFlow(ConfigFlow, domain=DOMAIN):
         await self.async_set_unique_id(DOMAIN)
         self._abort_if_unique_id_configured()
 
-        # Check for existing emulated_hue entries to offer migration
-        emulated_hue_entries = self.hass.config_entries.async_entries(
-            "emulated_hue"
-        )
-        if emulated_hue_entries:
-            self._import_entry = emulated_hue_entries[0]
-            return await self.async_step_import()
-
         errors: dict[str, str] = {}
 
         if user_input is not None:
@@ -93,53 +85,6 @@ class FauxMoConfigFlow(ConfigFlow, domain=DOMAIN):
                 }
             ),
             errors=errors,
-        )
-
-    async def async_step_import(
-        self,
-        user_input: dict[str, Any] | None = None,
-    ) -> ConfigFlowResult:
-        """Offer to import entities from an existing emulated_hue entry."""
-        if user_input is not None:
-            if user_input.get("confirm_import"):
-                imported_entities = self._import_entry.options.get(
-                    "entities", {}
-                )
-                return self.async_create_entry(
-                    title="FauxMo",
-                    data={
-                        CONF_BASE_PORT: int(
-                            user_input.get(CONF_BASE_PORT, DEFAULT_BASE_PORT)
-                        )
-                    },
-                    options={CONF_ENTITIES: imported_entities},
-                )
-            else:
-                return await self.async_step_user()
-
-        entity_count = len(
-            self._import_entry.options.get("entities", {})
-        )
-
-        return self.async_show_form(
-            step_id="import",
-            data_schema=vol.Schema(
-                {
-                    vol.Required("confirm_import", default=True): bool,
-                    vol.Required(
-                        CONF_BASE_PORT, default=DEFAULT_BASE_PORT
-                    ): NumberSelector(
-                        NumberSelectorConfig(
-                            min=1024,
-                            max=65535,
-                            mode=NumberSelectorMode.BOX,
-                        )
-                    ),
-                }
-            ),
-            description_placeholders={
-                "entity_count": str(entity_count),
-            },
         )
 
 

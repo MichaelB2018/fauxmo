@@ -113,17 +113,12 @@ and set custom Alexa-visible names:
    entity's friendly name).
 3. Save. Changes apply immediately — no restart required.
 
-### Migration from Emulated Hue
-
-If you have an existing **Emulated Hue** config entry, FauxMo will
-detect it on first setup and offer to import your entities automatically.
-
 ## Architecture
 
 ```
 custom_components/fauxmo/
 ├── __init__.py        # Integration lifecycle: setup, unload, options update
-├── config_flow.py     # Config flow UI (setup + options + migration)
+├── config_flow.py     # Config flow UI (setup + options)
 ├── const.py           # Constants (ports, domain, WeMo protocol values)
 ├── diagnostics.py     # Diagnostic data export
 ├── manifest.json      # HA integration manifest
@@ -214,5 +209,8 @@ originally forked from
 
 ## License
 
-This project is provided under the same license as Home Assistant Core.
+This project is released under the [MIT License](LICENSE). It includes
+code derived from [fauxmo](https://github.com/n8henrie/fauxmo)
+(original work copyright (c) 2015 Maker Musings, modified work
+copyright 2015 Nathan Henrie), also under the MIT License.
 

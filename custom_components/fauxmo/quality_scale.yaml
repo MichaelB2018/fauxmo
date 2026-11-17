@@ -16,7 +16,7 @@ rules:
     status: done
   config-flow:
     status: done
-    comment: Full config flow with user setup and emulated_hue migration.
+    comment: Full config flow with user setup and options flow.
   config-flow-test-coverage:
     status: done
   dependency-transparency:
@@ -118,8 +118,8 @@ rules:
   icon-translations:
     status: exempt
   repair-issues:
-    status: done
-    comment: Raises repair issue when legacy emulated_hue config is detected for migration.
+    status: exempt
+    comment: No user-actionable issues to raise.
   stale-devices:
     status: exempt
 

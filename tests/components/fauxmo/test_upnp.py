@@ -2,11 +2,15 @@
 
 from __future__ import annotations
 
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 
-from custom_components.fauxmo.upnp import SSDPDevice, UPnPResponder
+from custom_components.fauxmo.upnp import (
+    SSDPDevice,
+    UPnPResponder,
+    create_upnp_responder,
+)
 
 from .conftest import MOCK_HOST_IP
 
@@ -194,3 +198,16 @@ def test_set_devices_updates_list() -> None:
     responder.set_devices([])
     assert responder._devices == []
 
+
+async def test_create_responder_closes_socket_on_failure() -> None:
+    """The socket should be closed when bind or the multicast join fails."""
+    mock_sock = MagicMock()
+    mock_sock.bind.side_effect = OSError("Address already in use")
+
+    with (
+        patch("custom_components.fauxmo.upnp.socket.socket", return_value=mock_sock),
+        pytest.raises(OSError),
+    ):
+        await create_upnp_responder(MagicMock(), MOCK_HOST_IP)
+
+    mock_sock.close.assert_called_once()

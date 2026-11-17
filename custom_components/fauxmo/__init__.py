@@ -14,10 +14,11 @@ import asyncio
 import logging
 from typing import Any
 
+from homeassistant.components.network import async_get_source_ip
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EVENT_HOMEASSISTANT_STOP
 from homeassistant.core import Event, HomeAssistant
-from homeassistant.helpers.network import get_url
+from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers.storage import Store
 
 from .const import (
@@ -48,7 +49,7 @@ async def async_setup_entry(
     base_port: int = entry.data.get(CONF_BASE_PORT, DEFAULT_BASE_PORT)
     entities: dict[str, dict[str, str]] = entry.options.get(CONF_ENTITIES, {})
 
-    host_ip = _get_host_ip(hass)
+    host_ip = await async_get_source_ip(hass)
 
     # Activity tracking (persistent per-entity timestamps)
     tracker = ActivityTracker(
@@ -70,7 +71,13 @@ async def async_setup_entry(
         base_port=base_port,
         activity_tracker=tracker,
     )
-    await device_manager.update_entities(entities)
+    try:
+        await device_manager.update_entities(entities)
+    except OSError as err:
+        await device_manager.stop_all()
+        raise ConfigEntryNotReady(
+            f"Could not start FauxMo device servers: {err}"
+        ) from err
 
     # Start SSDP responder
     ssdp_transport: asyncio.DatagramTransport | None = None
@@ -195,26 +202,3 @@ def _update_ssdp_devices(
         for info in device_manager.devices.values()
     ]
     ssdp_protocol.set_devices(ssdp_devices)
-
-
-def _get_host_ip(hass: HomeAssistant) -> str:
-    """Determine the host IP address to advertise."""
-    try:
-        url = get_url(hass, allow_external=False, prefer_external=False)
-        from urllib.parse import urlparse
-
-        parsed = urlparse(url)
-        host = parsed.hostname
-        if host and host not in ("localhost", "127.0.0.1", "::1"):
-            return host
-    except Exception:
-        pass
-
-    import socket
-
-    try:
-        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
-            s.connect(("8.8.8.8", 80))
-            return s.getsockname()[0]
-    except Exception:
-        return "127.0.0.1"

@@ -10,14 +10,6 @@
         "data_description": {
           "base_port": "Starting TCP port for WeMo device servers. Each entity gets its own port offset from this value. Default is 50000."
         }
-      },
-      "import": {
-        "title": "Migrate from Emulated Hue",
-        "description": "An existing Emulated Hue configuration with {entity_count} entities was found. Import them into FauxMo?",
-        "data": {
-          "confirm_import": "Import entities from Emulated Hue",
-          "base_port": "Base port"
-        }
       }
     },
     "abort": {

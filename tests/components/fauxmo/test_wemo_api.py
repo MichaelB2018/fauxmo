@@ -121,6 +121,31 @@ async def test_setup_xml_content_type(wemo_client: TestClient) -> None:
     assert "xml" in resp.content_type
 
 
+async def test_setup_xml_escapes_device_name(
+    hass: HomeAssistant, aiohttp_client
+) -> None:
+    """Names with XML special characters should still produce valid XML."""
+    import xml.etree.ElementTree as ET
+
+    from aiohttp import web
+
+    name = "Tom & Jerry <lamp>"
+    info = DeviceInfo(
+        entity_id="light.tom_jerry",
+        name=name,
+        serial=make_serial(name),
+        port=51002,
+    )
+    server = WeMoDeviceServer(hass=hass, info=info, activity_tracker=None)
+    app = web.Application()
+    app.router.add_get("/setup.xml", server._handle_setup_xml)
+    client = await aiohttp_client(app)
+
+    resp = await client.get("/setup.xml")
+    root = ET.fromstring(await resp.text())
+    assert root.findtext("device/friendlyName") == name
+
+
 async def test_set_binary_state_on_calls_service(
     hass: HomeAssistant,
     wemo_client: TestClient,

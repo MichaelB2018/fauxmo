@@ -50,21 +50,36 @@ async def test_setup_entry_port_in_use(
     patch_host_ip,
     patch_upnp,
 ) -> None:
-    """Test setup failure when a device port is already in use."""
+    """Setup should retry and stop already-started servers when a port is taken."""
     mock_config_entry.add_to_hass(hass)
 
-    with patch(
-        "custom_components.fauxmo.wemo_api.web.TCPSite",
-    ) as mock_site_cls:
-        mock_site = AsyncMock()
-        mock_site.start.side_effect = OSError("Address already in use")
-        mock_site_cls.return_value = mock_site
+    started_sites: list[AsyncMock] = []
 
+    def _make_site(*args: Any, **kwargs: Any) -> AsyncMock:
+        site = AsyncMock()
+        # Let the first device start, then fail on the second
+        if started_sites:
+            site.start.side_effect = OSError("Address already in use")
+        started_sites.append(site)
+        return site
+
+    with (
+        patch(
+            "custom_components.fauxmo.wemo_api.web.TCPSite",
+            side_effect=_make_site,
+        ),
+        patch(
+            "custom_components.fauxmo.wemo_api.web.AppRunner.cleanup",
+            autospec=True,
+        ) as mock_cleanup,
+    ):
         result = await hass.config_entries.async_setup(mock_config_entry.entry_id)
 
-    # Port conflict on a device server should be non-fatal (logged and skipped)
-    # but overall setup still completes
-    assert result is True
+    assert result is False
+    assert mock_config_entry.state is ConfigEntryState.SETUP_RETRY
+    assert mock_config_entry.entry_id not in hass.data.get(DOMAIN, {})
+    # The device that started and the device that failed were both cleaned up
+    assert mock_cleanup.call_count == 2
 
 
 async def test_unload_entry(

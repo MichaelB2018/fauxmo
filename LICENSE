@@ -2,6 +2,12 @@ MIT License
 
 Copyright (c) 2026 MichaelB2018
 
+Portions of this software are derived from fauxmo
+(https://github.com/n8henrie/fauxmo), which is also MIT licensed:
+
+Original work copyright (c) 2015 Maker Musings
+Modified work copyright 2015 Nathan Henrie
+
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights

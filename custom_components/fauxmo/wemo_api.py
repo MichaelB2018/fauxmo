@@ -14,6 +14,7 @@ from __future__ import annotations
 import logging
 import time
 from typing import Any
+from xml.sax.saxutils import escape
 
 from aiohttp import web
 
@@ -142,7 +143,11 @@ class WeMoDeviceServer:
         self._runner = web.AppRunner(app)
         await self._runner.setup()
         self._site = web.TCPSite(self._runner, "0.0.0.0", self.info.port)
-        await self._site.start()
+        try:
+            await self._site.start()
+        except BaseException:
+            await self.stop()
+            raise
         _LOGGER.debug(
             "WeMo device '%s' listening on port %s (serial %s)",
             self.info.name,
@@ -173,7 +178,7 @@ class WeMoDeviceServer:
 
         xml = SETUP_XML.format(
             device_type=WEMO_DEVICE_TYPE,
-            device_name=self.info.name,
+            device_name=escape(self.info.name),
             manufacturer=WEMO_MANUFACTURER,
             model_name=WEMO_MODEL_NAME,
             model_number=WEMO_MODEL_NUMBER,
