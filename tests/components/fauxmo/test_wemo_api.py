@@ -66,7 +66,7 @@ def test_assign_port_deterministic() -> None:
 
 
 @pytest.fixture
-async def wemo_client(hass: HomeAssistant, aiohttp_client) -> TestClient:
+async def wemo_client(hass: HomeAssistant, aiohttp_client, socket_enabled) -> TestClient:
     """Create a test aiohttp client for a single WeMo device server."""
     hass.states.async_set(
         "input_boolean.test_switch", STATE_ON, {"friendly_name": "Test Switch"}
@@ -89,7 +89,7 @@ async def wemo_client(hass: HomeAssistant, aiohttp_client) -> TestClient:
 
 
 @pytest.fixture
-async def scene_client(hass: HomeAssistant, aiohttp_client) -> TestClient:
+async def scene_client(hass: HomeAssistant, aiohttp_client, socket_enabled) -> TestClient:
     """Create a test aiohttp client for a scene WeMo device server."""
     hass.states.async_set("scene.test_scene", STATE_OFF, {"friendly_name": "Test Scene"})
     info = DeviceInfo(
@@ -122,7 +122,7 @@ async def test_setup_xml_content_type(wemo_client: TestClient) -> None:
 
 
 async def test_setup_xml_escapes_device_name(
-    hass: HomeAssistant, aiohttp_client
+    hass: HomeAssistant, aiohttp_client, socket_enabled
 ) -> None:
     """Names with XML special characters should still produce valid XML."""
     import xml.etree.ElementTree as ET

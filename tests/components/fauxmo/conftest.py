@@ -8,8 +8,7 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 
-from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant
+from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.fauxmo.const import (
     CONF_BASE_PORT,
@@ -28,33 +27,31 @@ MOCK_ENTITIES: dict[str, dict[str, str]] = {
 MOCK_HOST_IP = "192.168.1.100"
 
 
+@pytest.fixture(autouse=True)
+def auto_enable_custom_integrations(enable_custom_integrations: None) -> None:
+    """Allow Home Assistant to load the custom integration in every test."""
+
+
 @pytest.fixture
-def mock_config_entry() -> ConfigEntry:
+def mock_config_entry() -> MockConfigEntry:
     """Create a mock config entry for FauxMo."""
-    entry = ConfigEntry(
-        version=1,
-        minor_version=1,
+    return MockConfigEntry(
         domain=DOMAIN,
         title="FauxMo",
         data={CONF_BASE_PORT: DEFAULT_BASE_PORT},
         options={CONF_ENTITIES: MOCK_ENTITIES},
-        source="user",
         unique_id=DOMAIN,
     )
-    return entry
 
 
 @pytest.fixture
-def mock_empty_config_entry() -> ConfigEntry:
+def mock_empty_config_entry() -> MockConfigEntry:
     """Create a config entry with no entities configured."""
-    return ConfigEntry(
-        version=1,
-        minor_version=1,
+    return MockConfigEntry(
         domain=DOMAIN,
         title="FauxMo",
         data={CONF_BASE_PORT: DEFAULT_BASE_PORT},
         options={CONF_ENTITIES: {}},
-        source="user",
         unique_id=DOMAIN,
     )
 
