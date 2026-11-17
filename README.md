@@ -1,11 +1,30 @@
 # FauxMo — Home Assistant Integration
 
-[![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
+[![hacs_badge](https://img.shields.io/badge/HACS-Default-41BDF5.svg)](https://github.com/hacs/integration)
 
-A Home Assistant custom integration that exposes selected entities as
-Belkin WeMo switches on the local network. Alexa discovers and controls
-them without cloud services or an Alexa skill — everything stays on
-your LAN, **no port 80 required**.
+**Talk to Home Assistant from Alexa — locally, with no cloud.**
+
+FauxMo lets an Amazon Echo control Home Assistant directly over your
+local network. There's no Nabu Casa subscription, no Alexa skill, no
+account linking and nothing to expose to the internet.
+
+Pick the entities you want Alexa to see (lights, switches, input
+booleans, scenes and scripts) and FauxMo presents each one to Alexa as
+a Belkin WeMo smart plug. Because scripts are supported, any custom
+action you build in Home Assistant can be triggered by voice: create a
+script called "Movie Night" and say *"Alexa, turn on Movie Night"*. You
+can also add these devices to Alexa routines.
+
+FauxMo is a friendlier replacement for Home Assistant's built-in
+**Emulated Hue**:
+
+- **Set up entirely in the UI.** No YAML, and changes apply without a
+  restart.
+- **Works on any port.** Emulated Hue needs port 80, which often clashes
+  with NGINX or other add-ons. FauxMo uses a configurable port range
+  (50000+ by default).
+- **Custom names per entity.** Choose exactly what Alexa calls each
+  device.
 
 Based on the [fauxmo](https://github.com/n8henrie/fauxmo) project by
 Nathan Henrie, originally forked from
@@ -54,11 +73,11 @@ Nathan Henrie, originally forked from
 
 ## Why WeMo instead of Hue?
 
-The Philips Hue emulation approach requires the HTTP server to be
-reachable on **port 80**, which conflicts with other services (e.g.
-NGINX, another web server). The Belkin WeMo approach gives each entity
-its own port in the 50000+ range — no port 80, no reverse proxy
-needed.
+Alexa only talks to an emulated Philips Hue bridge on **port 80**,
+which conflicts with other services (e.g. NGINX, another web server).
+Alexa reaches emulated Belkin WeMo devices on whatever port they
+advertise, so FauxMo gives each entity its own port in a configurable
+range: no port 80 and no reverse proxy needed.
 
 ## Supported entity domains
 
@@ -74,19 +93,18 @@ FauxMo supports up to **255** exposed entities per installation.
 
 [![Open your Home Assistant instance and open a repository in the Marketplace.](https://my.home-assistant.io/badges/marketplace_repository.svg)](https://my.home-assistant.io/redirect/marketplace_repository/?owner=MichaelB2018&repository=fauxmo&category=integration)
 
-1. Click the button above (Home Assistant 2026.11+), or open **Marketplace**
-   in Home Assistant and search for **FauxMo**.
-2. If FauxMo is not listed yet, the link offers to add this repository for you.
-3. Click **Download**, then restart Home Assistant.
+On Home Assistant 2026.11 or later:
+
+1. Open **Marketplace** in Home Assistant and search for **FauxMo**, or
+   click the button above.
+2. Click **Download**, then restart Home Assistant.
 
 ### HACS (Home Assistant before 2026.11)
 
 [![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=MichaelB2018&repository=fauxmo&category=integration)
 
-1. Open **HACS ? Integrations ? ? (three dots) ? Custom repositories**.
-2. Add this repository URL and select category **Integration**.
-3. Search for **FauxMo** and click **Download**.
-4. Restart Home Assistant.
+1. Open **HACS** and search for **FauxMo**, or click the button above.
+2. Click **Download**, then restart Home Assistant.
 
 ### Manual
 
