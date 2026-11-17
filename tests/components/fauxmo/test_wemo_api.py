@@ -149,6 +149,7 @@ async def test_setup_xml_escapes_device_name(
 async def test_set_binary_state_on_calls_service(
     hass: HomeAssistant,
     wemo_client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """SetBinaryState 1 should call the turn_on service."""
     calls: list[dict[str, Any]] = []
@@ -158,7 +159,12 @@ async def test_set_binary_state_on_calls_service(
     ) -> None:
         calls.append({"domain": domain, "service": service, "data": service_data})
 
-    hass.services.async_call = mock_call  # type: ignore[assignment]
+    # ServiceRegistry uses slots, so patch the class (undone after the test)
+    monkeypatch.setattr(
+        type(hass.services),
+        "async_call",
+        lambda _self, *args, **kwargs: mock_call(*args, **kwargs),
+    )
 
     soap_body = (
         '<?xml version="1.0"?>'
@@ -182,6 +188,7 @@ async def test_set_binary_state_on_calls_service(
 async def test_set_binary_state_off_calls_service(
     hass: HomeAssistant,
     wemo_client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """SetBinaryState 0 should call the turn_off service."""
     calls: list[dict[str, Any]] = []
@@ -191,7 +198,12 @@ async def test_set_binary_state_off_calls_service(
     ) -> None:
         calls.append({"domain": domain, "service": service, "data": service_data})
 
-    hass.services.async_call = mock_call  # type: ignore[assignment]
+    # ServiceRegistry uses slots, so patch the class (undone after the test)
+    monkeypatch.setattr(
+        type(hass.services),
+        "async_call",
+        lambda _self, *args, **kwargs: mock_call(*args, **kwargs),
+    )
 
     soap_body = (
         '<?xml version="1.0"?>'
@@ -215,6 +227,7 @@ async def test_set_binary_state_off_calls_service(
 async def test_scene_off_is_noop(
     hass: HomeAssistant,
     scene_client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """Turning off a scene should be a no-op (scenes are on-only)."""
     calls: list[dict[str, Any]] = []
@@ -224,7 +237,12 @@ async def test_scene_off_is_noop(
     ) -> None:
         calls.append({"domain": domain, "service": service, "data": service_data})
 
-    hass.services.async_call = mock_call  # type: ignore[assignment]
+    # ServiceRegistry uses slots, so patch the class (undone after the test)
+    monkeypatch.setattr(
+        type(hass.services),
+        "async_call",
+        lambda _self, *args, **kwargs: mock_call(*args, **kwargs),
+    )
 
     soap_body = (
         '<?xml version="1.0"?>'
